@@ -19,7 +19,33 @@ async function selenium(req: NextApiRequest, res: NextApiResponse) {
     await driver
       .findElement(By.xpath('//*[@id="likelion_num"]/div[2]/a/button'))
       .sendKeys(Key.ENTER);
-    res.status(204);
+    const applicants = await driver.findElements(
+      By.xpath('//*[@id="likelion_num"]/div[3]/a')
+    );
+
+    const dataList = [];
+
+    for (let i = 0; i < applicants.length; i++) {
+      const data = {
+        link: "",
+        name: "",
+        year: "",
+        major: "",
+      };
+      data.link = await applicants[i].getAttribute("href");
+      data.name = await applicants[i]
+        .findElement(By.className("user_name"))
+        .getText();
+      const profile = await applicants[i]
+        .findElement(By.className("user_profile"))
+        .getText();
+      const [year, major] = profile.split("\n");
+      data.year = year;
+      data.major = major;
+      dataList.push(data);
+    }
+
+    res.status(200).json({ message: "Login successed.", data: dataList });
   } catch (e) {
     if (e instanceof webdriver.error.NoSuchElementError) {
       res.status(403).json({ message: "Login failed." });
@@ -27,7 +53,9 @@ async function selenium(req: NextApiRequest, res: NextApiResponse) {
       console.error(e);
     }
   } finally {
-    await driver.quit();
+    setTimeout(async () => {
+      await driver.quit();
+    }, 2000);
   }
 }
 

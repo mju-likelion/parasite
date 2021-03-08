@@ -8,11 +8,16 @@ function Home() {
       password: "",
     },
     onSubmit: async (values) => {
-      const response = await axios.post("/api/selenium", {
-        email: values.email,
-        password: values.password,
-      });
-      console.log(response);
+      try {
+        const response = await axios.post("/api/selenium", {
+          email: values.email,
+          password: values.password,
+        });
+      } catch (e) {
+        if (e.response) {
+          // 로그인 실패 처리
+        }
+      }
     },
   });
 
