@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import axios from "axios";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 interface Member {
@@ -95,6 +96,7 @@ const Profile = styled.p`
 
 function Apply() {
   const [members, setMembers] = useState<Member[]>([]);
+  const router = useRouter();
 
   async function updateDB(email: string, password: string, users: string) {
     const { data } = await axios.post("/api/firebase-update", {
@@ -114,11 +116,15 @@ function Apply() {
     updateDB(email, password, users);
   }, []);
 
+  function handleLogout() {
+    router.push("/");
+  }
+
   return (
     <Self>
       <Header>
         <Logo>Parasite</Logo>
-        <Logout>로그아웃하고 새로고침하기</Logout>
+        <Logout onClick={handleLogout}>로그아웃하고 새로고침하기</Logout>
       </Header>
 
       <Info>
@@ -131,11 +137,15 @@ function Apply() {
         크롤링하여 다시 만든 페이지이기 때문에, 속도가 느릴 수 있습니다.
         <br />
         사용 중에 이슈를 발견할 시, 명지대 자연 유예빈에게 연락 부탁드립니다.
+        <p style={{ color: "#ff921b" }}>
+          버그가 있습니다! 이 페이지에 처음 들어오면 새로고침을 한 번 해주세요!
+          그래야 정상적으로 보여집니다!
+        </p>
       </Info>
 
       <Applicants>
         {members.map((member) => (
-          <a href={member.link} target="_blank">
+          <a key={member.link} href={member.link} target="_blank">
             <Applicant>
               <Name>{member.name}</Name>
               <Profile>{member.year}</Profile>

@@ -20,7 +20,6 @@ function Home() {
         localStorage.setItem("email", values.email);
         localStorage.setItem("password", values.password);
         localStorage.setItem("members", JSON.stringify(data));
-        console.log(data);
         router.push("/apply");
       } catch (e) {
         // if (e.response.status === 403) {

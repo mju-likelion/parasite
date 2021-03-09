@@ -4,6 +4,15 @@ import { changeNumToString } from "../../utils";
 
 async function firebaseUpdate({ body }: NextApiRequest, res: NextApiResponse) {
   const docRef = firestoreService.collection("applicants").doc(body.email);
+  const members = [];
+
+  const collection = await docRef
+    .collection("members")
+    .orderBy("createdAt", "desc")
+    .get();
+  collection.forEach((doc) => {
+    members.push(doc.data());
+  });
 
   const currentTime = Date.now();
   body.users.map(async (user) => {
@@ -13,25 +22,17 @@ async function firebaseUpdate({ body }: NextApiRequest, res: NextApiResponse) {
     const { exists: memberExists } = await memberRef.get();
 
     if (!memberExists) {
-      await memberRef.set({
+      const newMember = {
         link: user.link,
         name: user.name,
         year: user.year,
         major: user.major,
         createdAt: currentTime,
-      });
+      };
+      members.push(newMember);
+      await memberRef.set(newMember);
     }
   });
-
-  const members = [];
-  const collection = await docRef
-    .collection("members")
-    .orderBy("createdAt", "desc")
-    .get();
-  collection.forEach((doc) => {
-    members.push(doc.data());
-  });
-  console.log(members);
 
   res.status(200).json(members);
 }
