@@ -6,7 +6,7 @@ async function selenium(req: NextApiRequest, res: NextApiResponse) {
     .forBrowser("chrome")
     .usingServer(
       process.env.ENV === "production"
-        ? process.env.SELENIUM_SERVER
+        ? "http://selenium:4444/wd/hub"
         : "http://localhost:4444/wd/hub"
     )
     .build();
