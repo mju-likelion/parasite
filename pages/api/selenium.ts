@@ -4,7 +4,11 @@ import webdriver, { Builder, By, Key } from "selenium-webdriver";
 async function selenium(req: NextApiRequest, res: NextApiResponse) {
   const driver = await new Builder()
     .forBrowser("chrome")
-    .usingServer("http://localhost:4444/wd/hub")
+    .usingServer(
+      process.env.ENV === "production"
+        ? process.env.SELENIUM_SERVER
+        : "http://localhost:4444/wd/hub"
+    )
     .build();
 
   try {
