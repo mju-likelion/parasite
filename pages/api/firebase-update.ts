@@ -3,7 +3,6 @@ import { firestoreService } from "../../lib/firebase";
 import { changeNumToString } from "../../utils";
 
 async function firebaseUpdate({ body }: NextApiRequest, res: NextApiResponse) {
-  console.log(body);
   const docRef = firestoreService.collection("applicants").doc(body.email);
 
   const currentTime = Date.now();
@@ -12,7 +11,6 @@ async function firebaseUpdate({ body }: NextApiRequest, res: NextApiResponse) {
       .collection("members")
       .doc(changeNumToString(user.link.split("applicant/")[1], 5));
     const { exists: memberExists } = await memberRef.get();
-    console.log(user.link.split("applicant/")[1], memberExists);
 
     if (!memberExists) {
       await memberRef.set({
@@ -24,7 +22,18 @@ async function firebaseUpdate({ body }: NextApiRequest, res: NextApiResponse) {
       });
     }
   });
-  res.status(200).end();
+
+  const members = [];
+  const collection = await docRef
+    .collection("members")
+    .orderBy("createdAt", "desc")
+    .get();
+  collection.forEach((doc) => {
+    members.push(doc.data());
+  });
+  console.log(members);
+
+  res.status(200).json(members);
 }
 
 export default firebaseUpdate;
