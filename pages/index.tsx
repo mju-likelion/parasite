@@ -1,7 +1,9 @@
 import axios from "axios";
 import { useFormik } from "formik";
+import { useRouter } from "next/router";
 
 function Home() {
+  const router = useRouter();
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -9,14 +11,21 @@ function Home() {
     },
     onSubmit: async (values) => {
       try {
-        const response = await axios.post("/api/selenium", {
+        const {
+          data: { data },
+        } = await axios.post("/api/selenium", {
           email: values.email,
           password: values.password,
         });
+        localStorage.setItem("email", values.email);
+        localStorage.setItem("password", values.password);
+        localStorage.setItem("members", JSON.stringify(data));
+        console.log(data);
+        router.push("/apply");
       } catch (e) {
-        if (e.response) {
-          // 로그인 실패 처리
-        }
+        // if (e.response.status === 403) {
+        // 로그인 실패 처리
+        // }
       }
     },
   });
