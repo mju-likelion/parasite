@@ -47,8 +47,6 @@
 
 ## Special Thanks To
 
-<div align="center">
  <img itemprop="image" class="avatar flex-shrink-0" src="https://avatars.githubusercontent.com/u/46446169?s=200&amp;v=4" width="65" height="65" alt="@LikeLionSCH">
- </div>
 
 - 셀레니움 프로젝트를 만들고 공유해주신 [순천향대학교 멋쟁이 사자처럼](https://github.com/LikeLionSCH) 9기 운영진분들께 많은 감사를 표합니다.
