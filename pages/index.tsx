@@ -2,6 +2,8 @@ import styled from "@emotion/styled";
 import axios from "axios";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import Loading from "./loader";
 
 const Self = styled.div`
   display: flex;
@@ -9,6 +11,12 @@ const Self = styled.div`
   justify-content: center;
   width: 100vw;
   height: 100vh;
+`;
+
+const LoadingBlock = styled.div`
+  position: absolute;
+  justify-content: center;
+  align-items: center;
 `;
 
 const LoginBlock = styled.div`
@@ -72,6 +80,7 @@ const LogInButton = styled.button`
 
 function Home() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState<Boolean>(false);
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -79,6 +88,7 @@ function Home() {
     },
     onSubmit: async (values) => {
       try {
+        setIsLoading(true);
         const {
           data: { data },
         } = await axios.post("/api/selenium", {
@@ -88,6 +98,7 @@ function Home() {
         localStorage.setItem("email", values.email);
         localStorage.setItem("password", values.password);
         localStorage.setItem("members", JSON.stringify(data));
+        setIsLoading(false);
         router.push("/apply");
       } catch (e) {
         // if (e.response.status === 403) {
@@ -99,6 +110,9 @@ function Home() {
 
   return (
     <Self>
+      <LoadingBlock>
+        <Loading visible={isLoading}></Loading>
+      </LoadingBlock>
       <LoginBlock>
         <Form onSubmit={formik.handleSubmit}>
           <Title>로그인</Title>
